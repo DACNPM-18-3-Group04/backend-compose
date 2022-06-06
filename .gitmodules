@@ -1,0 +1,7 @@
+[submodule "backend"]
+	path = backend/
+	url = https://github.com/DACNPM-18-3-Group04/backend.git
+
+[submodule "service-auth"]
+	path = service-auth/
+	url = https://github.com/DACNPM-18-3-Group04/service-auth.git
