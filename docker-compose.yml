@@ -1,0 +1,54 @@
+version: "3.8"
+services:
+  main-backend-mysql:
+    image: mysql:8
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-db:/var/lib/mysql
+    env_file:
+      - .env.mysql
+
+  mservice-auth-api:
+    restart: unless-stopped
+    build: ./service-auth
+    ports:
+      - "50010:50010"
+    env_file:
+      - ./.env.service-auth
+
+  main-backend1:
+    restart: unless-stopped
+    build: ./backend
+    depends_on:
+      - main-backend-mysql
+      - mservice-auth-api
+    env_file:
+      - ./.env.main-backend
+    environment:
+      AUTH_MSERVICE_HOST: http://host.docker.internal:50010
+      DB_HOST: main-backend-mysql
+
+  main-backend2:
+    restart: unless-stopped
+    build: ./backend
+    depends_on:
+      - main-backend-mysql
+      - mservice-auth-api
+    env_file:
+      - ./.env.main-backend
+    environment:
+      AUTH_MSERVICE_HOST: http://host.docker.internal:50010
+      DB_HOST: main-backend-mysql
+
+  loadbalancer:
+    build: ./nginx-backend
+    links:
+      - main-backend1
+      - main-backend2
+    ports:
+      - "8080:8080"
+
+volumes:
+  mysql-db:

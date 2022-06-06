@@ -1,0 +1,6 @@
+frontend-admin/
+frontend-client/
+
+.env.main-backend
+.env.mysql
+.env.service-auth
